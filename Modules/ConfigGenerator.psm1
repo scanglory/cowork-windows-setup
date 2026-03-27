@@ -3,6 +3,9 @@ function Invoke-ConfigGeneration {
 
     # Step 1: Read CLAUDE.md template
     $templatePath = Join-Path $PSScriptRoot "..\templates\CLAUDE.md.template"
+    if (-not (Test-Path $templatePath)) {
+        throw "CLAUDE.md template not found at: $templatePath"
+    }
     $claudeTemplate = Get-Content $templatePath -Raw
 
     # Step 2: Replace all template tokens
@@ -33,8 +36,8 @@ $(if ($Config.OutlookMCPEnabled) { "- Outlook MCP ($($Config.OutlookAccountType)
 **CoworkOS Path:** $($Config.CoworkRoot)
 "@
     $claudeContent = $claudeContent -replace '{{INSTALLED_TOOLS}}', $toolsSection
-    # Also handle case where placeholder doesn't exist
-    if ($claudeContent -notmatch [regex]::Escape($toolsSection.Trim())) {
+    # If placeholder wasn't in template, append tools section at end
+    if ($claudeContent -notlike "*$($toolsSection.Substring(0, [Math]::Min(50, $toolsSection.Length)).Trim())*") {
         $claudeContent += "`n$toolsSection"
     }
 
@@ -47,6 +50,9 @@ $(if ($Config.OutlookMCPEnabled) { "- Outlook MCP ($($Config.OutlookAccountType)
 
     # Step 5: Generate MEMORY.md from template
     $memTemplatePath = Join-Path $PSScriptRoot "..\templates\MEMORY.md.template"
+    if (-not (Test-Path $memTemplatePath)) {
+        throw "MEMORY.md template not found at: $memTemplatePath"
+    }
     $memTemplate = Get-Content $memTemplatePath -Raw
     $memContent = $memTemplate `
         -replace '{{USER_NAME}}', $Config.UserName `

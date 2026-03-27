@@ -10,11 +10,17 @@ function Invoke-PluginInstall {
 
     foreach ($pluginName in $plugins) {
         Write-Host "Installing $pluginName..."
-        $result = & claude plugin install $pluginName 2>&1
-        if ($LASTEXITCODE -ne 0) {
-            Write-Warning "Plugin $pluginName installation may have failed: $result"
-        } else {
-            Write-Host "✓ $pluginName installed" -ForegroundColor Green
+        try {
+            $result = & claude plugin install $pluginName 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host "✓ $pluginName installed" -ForegroundColor Green
+            } else {
+                Write-Warning "Plugin $pluginName: $result"
+                Write-Warning "  → Install manually: Open Claude Code → Settings → Plugins → search '$pluginName'"
+            }
+        } catch {
+            Write-Warning "Plugin $pluginName could not be installed via CLI: $_"
+            Write-Warning "  → Install manually: Open Claude Code → Settings → Plugins → search '$pluginName'"
         }
     }
 
@@ -56,15 +62,9 @@ function Invoke-PluginInstall {
     Write-Host ""
     Write-Host "GSD provides /gsd:new-project, /gsd:plan-phase and other workflow commands"
 
-    # Step 3: Verify plugins
+    # Step 3: Note manual plugin verification
     Write-Host ""
-    Write-Host "Verifying installed plugins..."
-    $pluginList = & claude plugin list 2>&1
-    if ($pluginList -notmatch 'superpowers') {
-        Write-Warning "Could not confirm 'superpowers' plugin is listed. Claude CLI version differences may affect output format."
-    } else {
-        Write-Host "✓ Plugin verification passed" -ForegroundColor Green
-    }
+    Write-Host "  Plugins installed. To verify: open Claude Code and check Settings → Plugins." -ForegroundColor Gray
 
     # Step 4: Install GSD agents and rules into Claude config dir
     $agentsSource = Join-Path $PSScriptRoot "..\agents"
@@ -107,7 +107,7 @@ function Invoke-PluginInstall {
                     hooks   = @(
                         @{
                             type    = "command"
-                            command = "node $hookCommandBase\gsd-check-update.js"
+                            command = "node `"$hookCommandBase\gsd-check-update.js`""
                         }
                     )
                 }
@@ -118,7 +118,7 @@ function Invoke-PluginInstall {
                     hooks   = @(
                         @{
                             type    = "command"
-                            command = "node $hookCommandBase\gsd-context-monitor.js"
+                            command = "node `"$hookCommandBase\gsd-context-monitor.js`""
                         }
                     )
                 }
@@ -132,7 +132,7 @@ function Invoke-PluginInstall {
             $settingsHash = @{}
             $existingSettings.PSObject.Properties | ForEach-Object { $settingsHash[$_.Name] = $_.Value }
             $mergedSettings = $settingsHash + @{ hooks = $hooksConfig.hooks }
-            $mergedSettings | ConvertTo-Json -Depth 10 | Set-Content $settingsPath
+            $mergedSettings | ConvertTo-Json -Depth 10 | Set-Content $settingsPath -Encoding UTF8
             Write-Host "✓ Hooks registered in settings.json" -ForegroundColor Green
         } catch {
             Write-Warning "Could not update settings.json with hooks: $_"
@@ -140,7 +140,7 @@ function Invoke-PluginInstall {
     } else {
         try {
             New-Item -ItemType Directory -Force -Path (Split-Path $settingsPath) | Out-Null
-            $hooksConfig | ConvertTo-Json -Depth 10 | Set-Content $settingsPath
+            $hooksConfig | ConvertTo-Json -Depth 10 | Set-Content $settingsPath -Encoding UTF8
             Write-Host "✓ settings.json created with hooks configuration" -ForegroundColor Green
         } catch {
             Write-Warning "Could not create settings.json: $_"

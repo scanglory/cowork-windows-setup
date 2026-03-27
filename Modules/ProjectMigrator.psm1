@@ -54,7 +54,8 @@ function Invoke-ProjectMigration {
         if ($pathExists -and (Test-Path $claudeMdPath)) {
             $firstLines = Get-Content $claudeMdPath -TotalCount 10 -ErrorAction SilentlyContinue
             # Extract first non-empty, non-header line as description
-            $description = ($firstLines | Where-Object { $_ -match '\S' -and $_ -notmatch '^#' } | Select-Object -First 1) ?? ""
+            $firstMatch = $firstLines | Where-Object { $_ -match '\S' -and $_ -notmatch '^#' } | Select-Object -First 1
+            $description = if ($firstMatch) { $firstMatch } else { "" }
             if ($description.Length -gt 60) { $description = $description.Substring(0, 57) + "..." }
         }
 
