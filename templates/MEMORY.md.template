@@ -1,0 +1,33 @@
+# Memory Index — {{USER_NAME}} @ {{COMPANY_NAME}}
+
+**Last Updated:** {{SETUP_DATE}}
+**Memory Directory:** `{{COWORK_ROOT}}/memory/`
+
+---
+
+## How Memory Works
+
+Claude uses these Markdown files to remember context across sessions. At the start of a session, reference relevant memory files by name. At the end of every session, run `/wrap` and Claude will update the appropriate files with new learnings, decisions, and notes.
+
+Memory files are plain text — you can edit them directly at any time.
+
+---
+
+## Memory Files
+
+| File | Description |
+|------|-------------|
+| `user_profile.md` | Your background, working style, preferences, and goals. Claude uses this to personalize responses and recommendations. |
+| `feedback_defaults.md` | Your default preferences for how Claude should review and give feedback — tone, depth, format, and focus areas. |
+
+---
+
+## Recent Learnings
+
+_Claude will populate this section during `/wrap` sessions with key takeaways, decisions made, and lessons learned._
+
+---
+
+## Active Project Notes
+
+_Add current project context here so Claude can pick up where you left off._

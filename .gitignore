@@ -1,0 +1,16 @@
+# Secrets
+.env
+
+# Logs
+*.log
+cowork-setup.log
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+
+# Node
+node_modules/

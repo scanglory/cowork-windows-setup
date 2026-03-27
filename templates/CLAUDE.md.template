@@ -1,0 +1,113 @@
+# CLAUDE.md — {{USER_NAME}} @ {{COMPANY_NAME}}
+
+**Setup Date:** {{SETUP_DATE}}
+**CoworkOS Root:** {{COWORK_ROOT}}
+
+---
+
+## ⚠️ SECURITY RULES
+
+**These rules are non-negotiable and apply to every session:**
+
+- NEVER paste API keys, passwords, tokens, or any secrets into this chat
+- All secrets must live in `.env` files — never in source code or prompts
+- Do not share PII (personal identifiable information) in prompts
+- If you accidentally expose a secret, rotate it immediately
+
+---
+
+## Brand Identity
+
+- **Company:** {{COMPANY_NAME}}
+- **Industry:** {{INDUSTRY}}
+- **Tone:** {{TONE}}
+
+Use this brand context when drafting client-facing content, emails, proposals, and communications.
+
+---
+
+## Memory System
+
+Claude uses a file-based memory system to persist context across sessions.
+
+**Memory directory:** `{{COWORK_ROOT}}/memory/`
+
+**How it works:**
+- Memory files are plain Markdown files that Claude reads at the start of relevant sessions
+- Use `/wrap` at the end of every session to capture learnings and update memory
+- The `MEMORY.md` index file lists all available memory files and their purpose
+- Add project-specific notes to `MEMORY.md` under `## Active Project Notes`
+
+**Key memory files:**
+- `memory/MEMORY.md` — index of all memory files
+- `memory/user_profile.md` — your preferences, background, working style
+- `memory/feedback_defaults.md` — your default feedback and review preferences
+
+---
+
+## Legal & Compliance Rules
+
+- **Review all AI output** before sending to clients — you are responsible for accuracy
+- **No PII in prompts** — never paste client personal data, SSNs, financial account numbers, or health information into chat
+- **Verify all facts** — Claude can hallucinate; double-check statistics, legal references, and technical claims
+- **Client confidentiality** — do not share one client's information when working on another client's project
+- **Copyright** — do not reproduce large blocks of copyrighted text verbatim
+
+---
+
+## Workflow
+
+### GSD Commands (Get Stuff Done)
+
+Use these slash commands to run structured CoworkOS workflows:
+
+| Command | Purpose |
+|---------|---------|
+| `/gsd:new-project` | Kick off a new client or internal project |
+| `/gsd:plan-phase` | Plan a project phase with tasks and milestones |
+| `/gsd:weekly-review` | Run your weekly review and planning session |
+| `/gsd:client-checkin` | Prepare for a client check-in meeting |
+| `/gsd:retrospective` | Run a project retrospective |
+
+### Superpowers Skills
+
+| Command | Purpose |
+|---------|---------|
+| `/brainstorm` | Generate ideas on any topic |
+| `/wrap` | Wrap up a session and capture learnings |
+| `/review` | Review a document, proposal, or piece of work |
+| `/draft` | Draft an email, proposal, or document |
+| `/research` | Research a topic with structured output |
+
+---
+
+## Session Habits
+
+**Start of session:**
+1. Tell Claude what you're working on today
+2. Reference any relevant memory files or project context
+
+**End of every session:**
+1. Run `/wrap` to capture learnings, decisions, and next steps
+2. Claude will update the appropriate memory files
+3. Note any follow-up items in your task manager
+
+**Weekly:**
+- Run `/gsd:weekly-review` to review progress and plan ahead
+- Review `memory/MEMORY.md` and prune stale notes
+
+---
+
+## CoworkOS Setup
+
+**Installed tools and integrations:**
+
+| Tool | Type | Purpose |
+|------|------|---------|
+| Desktop Commander MCP | MCP Server | File system access, terminal commands, desktop automation |
+| Outlook MCP | MCP Server | Read/send emails, manage calendar, search contacts |
+| CoworkOS Plugins | Claude Skills | GSD workflows, brainstorming, wrap-up routines |
+
+**MCP configuration:** `%APPDATA%\Claude\claude_desktop_config.json`
+**CoworkOS root:** `{{COWORK_ROOT}}`
+**Environment variables:** `{{COWORK_ROOT}}\.env`
