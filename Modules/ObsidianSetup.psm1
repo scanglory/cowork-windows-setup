@@ -19,7 +19,7 @@ function Invoke-ObsidianSetup {
 
     if (-not $obsidianInstalled) {
         Write-Host "  Obsidian not found. Installing via winget..." -ForegroundColor Cyan
-        winget install Obsidian.Obsidian --accept-source-agreements --accept-package-agreements
+        & winget install Obsidian.Obsidian --accept-source-agreements --accept-package-agreements | Out-Host
         # Refresh PATH
         $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "Machine") + ";" +
                     [System.Environment]::GetEnvironmentVariable("PATH", "User")
