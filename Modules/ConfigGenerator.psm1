@@ -9,14 +9,18 @@ function Invoke-ConfigGeneration {
     $claudeTemplate = Get-Content $templatePath -Raw
 
     # Step 2: Replace all template tokens
+    $companyName = if ([string]::IsNullOrWhiteSpace($Config.CompanyName)) { 'Your Company' } else { $Config.CompanyName }
+    $industry    = if ([string]::IsNullOrWhiteSpace($Config.Industry))    { 'Your Industry' } else { $Config.Industry }
+    $setupDate   = Get-Date -Format 'yyyy-MM-dd'
+
     $claudeContent = $claudeTemplate `
-        -replace '{{USER_NAME}}', $Config.UserName `
-        -replace '{{SETUP_DATE}}', (Get-Date -Format 'yyyy-MM-dd') `
-        -replace '{{COWORK_ROOT}}', $Config.CoworkRoot `
-        -replace '{{DRIVE_PATH}}', $Config.DriveRoot `
-        -replace '{{COMPANY_NAME}}', (if ([string]::IsNullOrWhiteSpace($Config.CompanyName)) { 'Your Company' } else { $Config.CompanyName }) `
-        -replace '{{INDUSTRY}}', (if ([string]::IsNullOrWhiteSpace($Config.Industry)) { 'Your Industry' } else { $Config.Industry }) `
-        -replace '{{TONE}}', $Config.Tone
+        -replace '{{USER_NAME}}',    $Config.UserName `
+        -replace '{{SETUP_DATE}}',   $setupDate `
+        -replace '{{COWORK_ROOT}}',  $Config.CoworkRoot `
+        -replace '{{DRIVE_PATH}}',   $Config.DriveRoot `
+        -replace '{{COMPANY_NAME}}', $companyName `
+        -replace '{{INDUSTRY}}',     $industry `
+        -replace '{{TONE}}',         $Config.Tone
 
     # Step 3: Append dynamic installed tools section
     $toolsSection = @"
@@ -55,10 +59,10 @@ $(if ($Config.OutlookMCPEnabled) { "- Outlook MCP ($($Config.OutlookAccountType)
     }
     $memTemplate = Get-Content $memTemplatePath -Raw
     $memContent = $memTemplate `
-        -replace '{{USER_NAME}}', $Config.UserName `
-        -replace '{{COMPANY_NAME}}', (if ([string]::IsNullOrWhiteSpace($Config.CompanyName)) { 'Your Company' } else { $Config.CompanyName }) `
-        -replace '{{SETUP_DATE}}', (Get-Date -Format 'yyyy-MM-dd') `
-        -replace '{{COWORK_ROOT}}', $Config.CoworkRoot
+        -replace '{{USER_NAME}}',    $Config.UserName `
+        -replace '{{COMPANY_NAME}}', $companyName `
+        -replace '{{SETUP_DATE}}',   $setupDate `
+        -replace '{{COWORK_ROOT}}',  $Config.CoworkRoot
 
     $memPath = Join-Path $Config.CoworkRoot ".claude\MEMORY.md"
     Set-Content -Path $memPath -Value $memContent -Encoding UTF8
