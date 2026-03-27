@@ -65,6 +65,7 @@ try {
         "FolderBuilder.psm1",
         "ClaudeInstaller.psm1",
         "MCPInstaller.psm1",
+        "ObsidianSetup.psm1",
         "OutlookMCP.psm1",
         "ChromeSetup.psm1",
         "PluginInstaller.psm1",
@@ -87,7 +88,7 @@ try {
         SetupDate     = (Get-Date -Format "yyyy-MM-dd")
     }
 
-    $totalPhases = 10
+    $totalPhases = 11
 
     # Phase 1: Collect user name (UserName is needed by ProductivitySetup but
     # also used in ConfigGenerator header — collect it early)
@@ -110,24 +111,28 @@ try {
     Write-Phase 5 $totalPhases "MCP Installation (Desktop Commander)"
     $Config = Invoke-MCPInstall -Config $Config
 
-    # Phase 6: Outlook MCP
-    Write-Phase 6 $totalPhases "Outlook MCP Setup"
+    # Phase 6: Obsidian
+    Write-Phase 6 $totalPhases "Obsidian Second Brain Setup"
+    $Config = Invoke-ObsidianSetup -Config $Config
+
+    # Phase 7: Outlook MCP
+    Write-Phase 7 $totalPhases "Outlook MCP Setup"
     $Config = Invoke-OutlookMCPSetup -Config $Config
 
-    # Phase 7: Chrome extension
-    Write-Phase 7 $totalPhases "Chrome Extension Setup"
+    # Phase 8: Chrome extension
+    Write-Phase 8 $totalPhases "Chrome Extension Setup"
     $Config = Invoke-ChromeSetup -Config $Config
 
-    # Phase 8: Plugins + GSD
-    Write-Phase 8 $totalPhases "Plugin Installation (Superpowers, GSD, Everything Claude Code)"
+    # Phase 9: Plugins + GSD
+    Write-Phase 9 $totalPhases "Plugin Installation (Superpowers, GSD, Everything Claude Code)"
     $Config = Invoke-PluginInstall -Config $Config
 
-    # Phase 9: Productivity setup (branding, memory, legal)
-    Write-Phase 9 $totalPhases "Personalization (Brand, Memory, Legal)"
+    # Phase 10: Productivity setup (branding, memory, legal)
+    Write-Phase 10 $totalPhases "Personalization (Brand, Memory, Legal)"
     $Config = Invoke-ProductivitySetup -Config $Config
 
-    # Phase 10: Generate config files
-    Write-Phase 10 $totalPhases "Generating CLAUDE.md, MEMORY.md, .env"
+    # Phase 11: Generate config files
+    Write-Phase 11 $totalPhases "Generating CLAUDE.md, MEMORY.md, .env"
     $Config = Invoke-ConfigGeneration -Config $Config
 
     # ── Summary ───────────────────────────────────────────────────────────
