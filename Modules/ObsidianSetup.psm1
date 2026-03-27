@@ -31,14 +31,15 @@ function Invoke-ObsidianSetup {
     $obsidianDir = Join-Path $Config.CoworkRoot ".obsidian"
     New-Item -ItemType Directory -Force -Path $obsidianDir | Out-Null
 
-    # app.json — basic vault config
+    # app.json — basic vault config (community plugins must be enabled here)
     $appJson = @{
-        legacyEditor    = $false
-        livePreview     = $true
-        defaultViewMode = "source"
-        vimMode         = $false
+        legacyEditor            = $false
+        livePreview             = $true
+        defaultViewMode         = "source"
+        vimMode                 = $false
     } | ConvertTo-Json
     Set-Content -Path "$obsidianDir\app.json" -Value $appJson -Encoding UTF8
+
 
     # appearance.json
     $appearanceJson = @{
@@ -85,44 +86,66 @@ function Invoke-ObsidianSetup {
     Set-Content -Path "$vaultClaudeDir\settings.json" -Value $vaultSettings -Encoding UTF8
     Write-Host "  ✓ Vault Claude hooks configured" -ForegroundColor Green
 
-    # ── Step 4: Guide user to install Local REST API plugin ─────────────────────
+    # ── Step 4: Auto-install Local REST API plugin from GitHub ──────────────────
     Write-Host ""
-    Write-Host "  ─────────────────────────────────────────────────────"
-    Write-Host "  Install the Obsidian Local REST API Plugin" -ForegroundColor Cyan
-    Write-Host "  ─────────────────────────────────────────────────────"
-    Write-Host ""
-    Write-Host "  This lets Claude search and interact with your vault."
-    Write-Host ""
-    Write-Host "  Steps:"
-    Write-Host "  1. Open Obsidian"
-    Write-Host "  2. Open your CoworkOS vault: $($Config.CoworkRoot)"
-    Write-Host "  3. Go to Settings → Community Plugins → Browse"
-    Write-Host "  4. Search for: 'Local REST API'"
-    Write-Host "  5. Install and Enable it"
-    Write-Host "  6. Go to Settings → Local REST API"
-    Write-Host "  7. Copy the API Key shown there"
-    Write-Host ""
+    Write-Host "  Installing Obsidian Local REST API plugin..." -ForegroundColor Cyan
 
-    # Try to open Obsidian automatically
-    $obsidianExe = @(
-        "${env:LOCALAPPDATA}\Obsidian\Obsidian.exe",
-        "${env:PROGRAMFILES}\Obsidian\Obsidian.exe"
-    ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+    $pluginId  = "obsidian-local-rest-api"
+    $pluginDir = Join-Path $obsidianDir "plugins\$pluginId"
+    New-Item -ItemType Directory -Force -Path $pluginDir | Out-Null
 
-    if ($obsidianExe) {
-        Write-Host "  Opening Obsidian..." -ForegroundColor Gray
-        Start-Process $obsidianExe
+    # Fetch latest release metadata from GitHub API
+    $releaseApi = "https://api.github.com/repos/coddingtonbear/obsidian-local-rest-api/releases/latest"
+    try {
+        $iwrParams = @{ Uri = $releaseApi; UseBasicParsing = $true; Headers = @{ 'User-Agent' = 'CoworkOS-Setup' } }
+        if ($Config.Proxy) { $iwrParams.Proxy = $Config.Proxy; $iwrParams.ProxyUseDefaultCredentials = $true }
+        $releaseInfo = Invoke-WebRequest @iwrParams | ConvertFrom-Json
+        $tag = $releaseInfo.tag_name
+
+        # Download main.js, manifest.json, styles.css from the release assets
+        $baseUrl = "https://github.com/coddingtonbear/obsidian-local-rest-api/releases/download/$tag"
+        foreach ($file in @("main.js", "manifest.json", "styles.css")) {
+            $fileParams = @{
+                Uri             = "$baseUrl/$file"
+                OutFile         = "$pluginDir\$file"
+                UseBasicParsing = $true
+            }
+            if ($Config.Proxy) { $fileParams.Proxy = $Config.Proxy; $fileParams.ProxyUseDefaultCredentials = $true }
+            try { Invoke-WebRequest @fileParams } catch { <# styles.css is optional #> }
+        }
+        Write-Host "  ✓ Plugin files downloaded ($tag)" -ForegroundColor Green
+    } catch {
+        Write-Host "  ✗ Could not download plugin automatically: $_" -ForegroundColor Red
+        Write-Host "  Manual install: Settings → Community Plugins → Browse → 'Local REST API'" -ForegroundColor Yellow
     }
 
-    Write-Host "  Press any key once you have the API key ready..."
-    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-    Write-Host ""
+    # Enable the plugin in community-plugins.json
+    $cpPath = Join-Path $obsidianDir "community-plugins.json"
+    $enabledPlugins = if (Test-Path $cpPath) {
+        Get-Content $cpPath -Raw | ConvertFrom-Json
+    } else {
+        @()
+    }
+    if ($enabledPlugins -notcontains $pluginId) {
+        $enabledPlugins = @($enabledPlugins) + $pluginId
+    }
+    Set-Content -Path $cpPath -Value ($enabledPlugins | ConvertTo-Json) -Encoding UTF8
 
-    # ── Step 5: Collect API key and install Obsidian MCP ────────────────────────
-    $apiKey = Read-Host "  Enter your Obsidian Local REST API key" -AsSecureString
-    $apiKeyPlain = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
-        [Runtime.InteropServices.Marshal]::SecureStringToBSTR($apiKey)
-    )
+    # Generate a cryptographically random API key
+    $keyBytes = New-Object byte[] 32
+    [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($keyBytes)
+    $apiKeyPlain = [System.BitConverter]::ToString($keyBytes) -replace '-', ''
+
+    # Write plugin data.json with pre-set API key (plugin reads this on startup)
+    $pluginData = @{
+        apiKey              = $apiKeyPlain
+        port                = 27123
+        bindingHost         = "127.0.0.1"
+        enableInsecureServer = $false
+    } | ConvertTo-Json
+    Set-Content -Path "$pluginDir\data.json" -Value $pluginData -Encoding UTF8
+
+    Write-Host "  ✓ Local REST API plugin configured (API key pre-generated)" -ForegroundColor Green
 
     # Install obsidian-mcp npm package
     Write-Host ""
@@ -171,7 +194,36 @@ function Invoke-ObsidianSetup {
     Write-Host "  Test it in Claude: 'Search my vault for project notes'"
     Write-Host ""
 
-    # ── Step 6: Recommend Smart Connections plugin ───────────────────────────────
+    # ── Step 6: Prompt user to open Obsidian and enable community plugins ────────
+    Write-Host ""
+    Write-Host "  ─────────────────────────────────────────────────────"
+    Write-Host "  One Manual Step Required" -ForegroundColor Yellow
+    Write-Host "  ─────────────────────────────────────────────────────"
+    Write-Host ""
+    Write-Host "  Obsidian blocks community plugins until you approve them once."
+    Write-Host ""
+    Write-Host "  1. Open Obsidian and select your CoworkOS vault"
+    Write-Host "  2. Go to Settings → Community Plugins"
+    Write-Host "  3. Click 'Turn off Restricted Mode'"
+    Write-Host "  4. Click 'Enable' on 'Local REST API' (already installed)"
+    Write-Host ""
+    Write-Host "  Your API key is already set — no need to copy anything." -ForegroundColor Green
+    Write-Host ""
+
+    $obsidianExe = @(
+        "${env:LOCALAPPDATA}\Obsidian\Obsidian.exe",
+        "${env:PROGRAMFILES}\Obsidian\Obsidian.exe"
+    ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+    if ($obsidianExe) {
+        Write-Host "  Opening Obsidian..." -ForegroundColor Gray
+        Start-Process $obsidianExe
+    }
+
+    Write-Host "  Press any key when done..."
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    Write-Host ""
+
+    # ── Step 7: Recommend Smart Connections plugin ───────────────────────────────
     Write-Host "  ─────────────────────────────────────────────────────"
     Write-Host "  Recommended: Smart Connections Plugin" -ForegroundColor Yellow
     Write-Host "  ─────────────────────────────────────────────────────"
