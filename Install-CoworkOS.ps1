@@ -10,7 +10,6 @@
 [CmdletBinding()]
 param()
 
-Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 # ── Banner ─────────────────────────────────────────────────────────────────
@@ -77,7 +76,11 @@ try {
         $modPath = Join-Path $modulesDir $mod
         Write-Host "  Loading $mod..." -ForegroundColor DarkGray
         if (Test-Path $modPath) {
-            Import-Module $modPath -Force -ErrorAction Stop
+            try {
+                Import-Module $modPath -Force -ErrorAction Stop
+            } catch {
+                throw "Failed to load module '$mod': $($_.Exception.Message)"
+            }
         } else {
             Write-Warning "Module not found: $mod"
         }
