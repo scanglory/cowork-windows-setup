@@ -41,22 +41,20 @@ function Invoke-OutlookMCPSetup {
     }
     else {
         Write-Host "Detected: Corporate Microsoft 365 account"
+        Write-Host ""
+        Write-Host "Corporate Outlook MCP requires an Azure AD app registration." -ForegroundColor Yellow
+        Write-Host "Skipping for now — you can set this up later via the docs." -ForegroundColor Yellow
+        Write-Host ""
+        return $Config + @{ OutlookMCPEnabled = $false; OutlookAccountType = "Corporate" }
     }
 
-    # -- Step 3a / 3b: Account-type-specific setup -----------------------------
+    # -- Step 3: Personal (IMAP) setup -----------------------------------------
     $mcpEntry  = $null
     $envVars   = @{}
 
-    if ($accountType -eq "Personal") {
-        $mcpEntry = Invoke-PersonalOutlookSetup -Config $Config -Email $email
-        $envVars  = $mcpEntry.EnvVars
-        $mcpEntry = $mcpEntry.McpEntry
-    }
-    else {
-        $mcpEntry = Invoke-CorporateOutlookSetup -Config $Config -Email $email
-        $envVars  = $mcpEntry.EnvVars
-        $mcpEntry = $mcpEntry.McpEntry
-    }
+    $result   = Invoke-PersonalOutlookSetup -Config $Config -Email $email
+    $envVars  = $result.EnvVars
+    $mcpEntry = $result.McpEntry
 
     # -- Write .env file -------------------------------------------------------
     $envDir  = "$($Config.CoworkRoot)\.claude"
