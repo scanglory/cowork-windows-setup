@@ -45,8 +45,8 @@ function Invoke-ClaudeInstall {
 
     if ($proxy) {
         Write-Host "Proxy detected: $proxy. Configuring npm..."
-        & npm config set proxy $proxy 2>$null
-        & npm config set https-proxy $proxy 2>$null
+        $null = & npm config set proxy $proxy 2>&1
+        $null = & npm config set https-proxy $proxy 2>&1
     }
 
     # -- Step 2: SmartScreen warning ------------------------------------------
@@ -62,7 +62,7 @@ function Invoke-ClaudeInstall {
 
     if (-not $nodeCmd) {
         Write-Host "Node.js not found. Installing via winget..."
-        & winget install OpenJS.NodeJS.LTS --accept-source-agreements --accept-package-agreements
+        & winget install OpenJS.NodeJS.LTS --accept-source-agreements --accept-package-agreements | Out-Host
         Refresh-Path
     }
     else {
@@ -73,10 +73,10 @@ function Invoke-ClaudeInstall {
             $nodeMajor = [int]$Matches[1]
             if ($nodeMajor -lt 18) {
                 Write-Host "Node.js $nodeVersionRaw is below v18. Installing nvm-windows and upgrading..."
-                & winget install CoreyButler.NVMforWindows --accept-source-agreements --accept-package-agreements
+                & winget install CoreyButler.NVMforWindows --accept-source-agreements --accept-package-agreements | Out-Host
                 Refresh-Path
-                & nvm install 20
-                & nvm use 20
+                & nvm install 20 | Out-Host
+                & nvm use 20 | Out-Host
                 Refresh-Path
             }
             else {
@@ -101,7 +101,7 @@ function Invoke-ClaudeInstall {
 
     if (-not $gitCmd) {
         Write-Host "Git not found. Installing via winget..."
-        & winget install Git.Git --accept-source-agreements --accept-package-agreements
+        & winget install Git.Git --accept-source-agreements --accept-package-agreements | Out-Host
         Refresh-Path
     }
     else {
@@ -123,10 +123,10 @@ function Invoke-ClaudeInstall {
         Write-Host "Claude Code not found. Installing via npm..."
         $isAdminNow = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
         if ($isAdminNow) {
-            & npm install -g "@anthropic-ai/claude-code"
+            $null = & npm install -g "@anthropic-ai/claude-code" 2>&1
         } else {
             $npmPrefix = "$env:USERPROFILE\.npm-global"
-            & npm install --prefix $npmPrefix "@anthropic-ai/claude-code"
+            $null = & npm install --prefix $npmPrefix "@anthropic-ai/claude-code" 2>&1
             $env:PATH = "$npmPrefix\bin;$env:PATH"
             [Environment]::SetEnvironmentVariable("PATH", "$npmPrefix\bin;" + [Environment]::GetEnvironmentVariable("PATH", "User"), "User")
         }

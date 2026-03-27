@@ -30,7 +30,7 @@ function Invoke-PluginInstall {
     $gsdInstalled = $false
 
     if ($Config.IsAdmin) {
-        $gsdResult = & npm install -g get-shit-done-cc 2>&1
+        $gsdResult = & npm install -g get-shit-done-cc 2>&1 | Out-String
         if ($LASTEXITCODE -eq 0) {
             Write-Host "[OK] GSD installed globally" -ForegroundColor Green
             $gsdInstalled = $true
@@ -42,7 +42,7 @@ function Invoke-PluginInstall {
     if (-not $gsdInstalled) {
         # Try local prefix install
         $localPrefix = Join-Path $env:APPDATA "npm"
-        $gsdResult = & npm install --prefix $localPrefix get-shit-done-cc 2>&1
+        $gsdResult = & npm install --prefix $localPrefix get-shit-done-cc 2>&1 | Out-String
         if ($LASTEXITCODE -eq 0) {
             Write-Host "[OK] GSD installed to local prefix: $localPrefix" -ForegroundColor Green
             $gsdInstalled = $true

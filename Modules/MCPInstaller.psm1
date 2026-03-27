@@ -24,7 +24,7 @@ function Invoke-MCPInstall {
     # -- Step 2: Install Desktop Commander ------------------------------------
     if ($Config.IsAdmin) {
         Write-Host "Installing Desktop Commander globally (admin)..."
-        & npm install -g @wonderwhy-er/desktop-commander
+        $null = & npm install -g @wonderwhy-er/desktop-commander 2>&1
         if ($LASTEXITCODE -ne 0) {
             Write-Warning "Global npm install returned exit code $LASTEXITCODE. Continuing..."
         }
@@ -33,7 +33,7 @@ function Invoke-MCPInstall {
         $npmPrefix = "$env:USERPROFILE\.npm-global"
         Write-Host "Installing Desktop Commander to user prefix: $npmPrefix ..."
 
-        & npm install --prefix $npmPrefix @wonderwhy-er/desktop-commander
+        $null = & npm install --prefix $npmPrefix @wonderwhy-er/desktop-commander 2>&1
         if ($LASTEXITCODE -ne 0) {
             Write-Warning "npm install --prefix returned exit code $LASTEXITCODE. Continuing..."
         }
