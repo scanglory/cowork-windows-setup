@@ -9,68 +9,6 @@
 # ── Bypass execution policy for this process only ──────────────────────────
 Set-ExecutionPolicy -Scope Process Bypass -Force -ErrorAction SilentlyContinue
 
-# ── Password Gate ──────────────────────────────────────────────────────────
-# Access is restricted to authorized Cowork users only.
-# The hash below is SHA256 of the access password.
-# To update: run tools\New-AccessHash.ps1 and paste the result here.
-$ACCESS_HASH = "9DC415325A95C6E2558BF141A8772A175DE49B08F0A027C8720AD942D6EC63F7"
-
-function Test-AccessPassword {
-    param([string]$StoredHash)
-
-    Write-Host ""
-    Write-Host "╔══════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-    Write-Host "║                CoworkOS — Authorized Access Only            ║" -ForegroundColor Cyan
-    Write-Host "╚══════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
-    Write-Host ""
-    Write-Host "  This installer is for authorized Cowork members only." -ForegroundColor White
-    Write-Host "  Contact your Cowork administrator for access." -ForegroundColor Gray
-    Write-Host ""
-
-    $attempts = 0
-    $maxAttempts = 3
-
-    while ($attempts -lt $maxAttempts) {
-        $securePass = Read-Host "  Enter access password" -AsSecureString
-        $plain = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
-            [Runtime.InteropServices.Marshal]::SecureStringToBSTR($securePass)
-        )
-
-        $bytes = [System.Text.Encoding]::UTF8.GetBytes($plain)
-        $sha256 = [System.Security.Cryptography.SHA256]::Create()
-        $hashBytes = $sha256.ComputeHash($bytes)
-        $inputHash = [System.BitConverter]::ToString($hashBytes) -replace '-', ''
-        $sha256.Dispose()
-
-        # Clear plaintext from memory immediately
-        $plain = $null
-        [GC]::Collect()
-
-        if ($inputHash.ToUpper() -eq $StoredHash.ToUpper()) {
-            Write-Host ""
-            Write-Host "  ✓ Access granted" -ForegroundColor Green
-            Write-Host ""
-            return $true
-        }
-
-        $attempts++
-        $remaining = $maxAttempts - $attempts
-        if ($remaining -gt 0) {
-            Write-Host "  ✗ Incorrect password. $remaining attempt(s) remaining." -ForegroundColor Red
-        }
-    }
-
-    Write-Host ""
-    Write-Host "  ✗ Access denied. Maximum attempts reached." -ForegroundColor Red
-    Write-Host ""
-    return $false
-}
-
-# Validate password before doing anything else
-if (-not (Test-AccessPassword -StoredHash $ACCESS_HASH)) {
-    exit 1
-}
-
 # ── Download and extract repo ──────────────────────────────────────────────
 $repoOwner = "scanglory"
 $repoName  = "cowork-windows-setup"
