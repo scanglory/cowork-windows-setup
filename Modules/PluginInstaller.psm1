@@ -92,14 +92,8 @@ function Invoke-PluginInstall {
     }
 
     # Step 5: Configure GSD hooks in settings.json
-    $hooksSource = Join-Path $PSScriptRoot "..\hooks"
-    $hooksDest = Join-Path $Config.ClaudeConfigDir "hooks"
-
-    if (Test-Path $hooksSource) {
-        New-Item -ItemType Directory -Force -Path $hooksDest | Out-Null
-        Copy-Item "$hooksSource\*" $hooksDest -Force
-        Write-Host "✓ Hooks deployed to $hooksDest" -ForegroundColor Green
-    }
+    # Note: GSD hook files are installed by the GSD npm package, not bundled in this repo.
+    # We only register hooks in settings.json, pointing to where GSD installs them.
 
     # Register hooks in settings.json
     $settingsPath = Join-Path $Config.ClaudeConfigDir "settings.json"

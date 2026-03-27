@@ -7,6 +7,10 @@ function Invoke-ProductivitySetup {
     Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
     Write-Host ""
 
+    # Get user's name
+    $UserName = Read-Host "Enter your full name (for Claude to address you by)"
+    if ([string]::IsNullOrWhiteSpace($UserName)) { $UserName = "User" }
+
     # Collect brand info
     Write-Host "What is your company or brand name? (press Enter to skip):" -NoNewline
     $CompanyName = Read-Host " "
@@ -35,7 +39,7 @@ type: user
 
 # User Profile
 
-**Name:** $($Config.UserName)
+**Name:** $UserName
 **Role:** $UserRole
 **Company:** $CompanyName
 **Industry:** $Industry
@@ -78,6 +82,7 @@ type: feedback
     Write-Host "✓ Memory directory initialized at $memoryDir" -ForegroundColor Green
 
     return $Config + @{
+        UserName    = $UserName
         CompanyName = $CompanyName
         Industry    = $Industry
         Tone        = if ($Tone -eq '') { 'professional' } else { $Tone }
