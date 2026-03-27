@@ -95,10 +95,11 @@ function Invoke-MCPInstall {
         args    = @("-y", "@wonderwhy-er/desktop-commander")
     }
 
-    # Merge mcpServers — never mutate existing hashtable, build new ones
-    $existingMcpServers = if ($settings.ContainsKey("mcpServers")) { $settings["mcpServers"] } else { @{} }
-    $newMcpServers      = $existingMcpServers + @{ "desktop-commander" = $dcEntry }
-    $newSettings        = $settings + @{ mcpServers = $newMcpServers }
+    # Merge mcpServers — clone existing and overwrite key to handle re-runs
+    $existingMcpServers = if ($settings.ContainsKey("mcpServers") -and $settings["mcpServers"] -is [hashtable]) { $settings["mcpServers"].Clone() } else { @{} }
+    $existingMcpServers["desktop-commander"] = $dcEntry
+    $newSettings = $settings.Clone()
+    $newSettings["mcpServers"] = $existingMcpServers
 
     try {
         $newSettings | ConvertTo-Json -Depth 10 | Set-Content -Path $settingsPath -Encoding UTF8

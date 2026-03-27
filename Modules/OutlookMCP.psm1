@@ -98,10 +98,11 @@ function Invoke-OutlookMCPSetup {
     $settingsPath = "$($Config.ClaudeConfigDir)\settings.json"
     $settings     = Read-SettingsJson -Path $settingsPath
 
-    $existingMcpServers = if ($settings.ContainsKey("mcpServers")) { $settings["mcpServers"] } else { @{} }
+    $existingMcpServers = if ($settings.ContainsKey("mcpServers") -and $settings["mcpServers"] -is [hashtable]) { $settings["mcpServers"].Clone() } else { @{} }
     $serverKey          = if ($accountType -eq "Personal") { "outlook-imap" } else { "outlook-msgraph" }
-    $newMcpServers      = $existingMcpServers + @{ $serverKey = $mcpEntry }
-    $newSettings        = $settings + @{ mcpServers = $newMcpServers }
+    $existingMcpServers[$serverKey] = $mcpEntry
+    $newSettings        = $settings.Clone()
+    $newSettings["mcpServers"] = $existingMcpServers
 
     try {
         $newSettings | ConvertTo-Json -Depth 10 | Set-Content -Path $settingsPath -Encoding UTF8
