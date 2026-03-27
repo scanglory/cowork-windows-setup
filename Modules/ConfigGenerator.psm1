@@ -92,7 +92,7 @@ COWORK_ROOT=$($Config.CoworkRoot)
     try {
         $acl = Get-Acl $envPath
         $acl.SetAccessRuleProtection($true, $false)  # Disable inheritance
-        $acl.Access | ForEach-Object { $acl.RemoveAccessRule($_) } | Out-Null
+        foreach ($rule in @($acl.Access)) { [void]$acl.RemoveAccessRule($rule) }
         $rule = New-Object System.Security.AccessControl.FileSystemAccessRule(
             [System.Security.Principal.WindowsIdentity]::GetCurrent().Name,
             "FullControl",
@@ -113,11 +113,11 @@ COWORK_ROOT=$($Config.CoworkRoot)
     }
 
     # Step 8: Return updated config
-    return $Config + @{
-        ClaudeMdPath = $claudeMdCowork
-        MemoryMdPath = $memPath
-        EnvPath      = $envPath
-    }
+    $newConfig = $Config.Clone()
+    $newConfig['ClaudeMdPath'] = $claudeMdCowork
+    $newConfig['MemoryMdPath'] = $memPath
+    $newConfig['EnvPath']      = $envPath
+    return $newConfig
 }
 
 Export-ModuleMember -Function Invoke-ConfigGeneration

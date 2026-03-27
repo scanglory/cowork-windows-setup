@@ -131,12 +131,12 @@ Thumbs.db
     Write-Host "CoworkOS folder structure created at: $coworkRoot"
 
     # Return new Config hashtable with additional keys added (immutable pattern)
-    return $Config + @{
-        CoworkRoot         = $coworkRoot
-        WorkCategories     = $workCategories
-        PersonalCategories = $personalCategories
-        IncludePersonal    = $includePersonal
-    }
+    $newConfig = $Config.Clone()
+    $newConfig['CoworkRoot']         = $coworkRoot
+    $newConfig['WorkCategories']     = $workCategories
+    $newConfig['PersonalCategories'] = $personalCategories
+    $newConfig['IncludePersonal']    = $includePersonal
+    return $newConfig
 }
 
 Export-ModuleMember -Function Invoke-FolderBuild

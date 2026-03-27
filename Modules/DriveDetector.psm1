@@ -97,7 +97,9 @@ function Invoke-DriveDetection {
     Write-Host "Drive root set to: $driveRoot"
 
     # Return new Config hashtable with DriveRoot added (immutable pattern)
-    return $Config + @{ DriveRoot = $driveRoot }
+    $newConfig = $Config.Clone()
+    $newConfig['DriveRoot'] = $driveRoot
+    return $newConfig
 }
 
 Export-ModuleMember -Function Invoke-DriveDetection

@@ -81,14 +81,16 @@ type: feedback
     Write-Host ""
     Write-Host "[OK] Memory directory initialized at $memoryDir" -ForegroundColor Green
 
-    return $Config + @{
-        UserName    = $UserName
-        CompanyName = $CompanyName
-        Industry    = $Industry
-        Tone        = if ($Tone -eq '') { 'professional' } else { $Tone }
-        UserRole    = $UserRole
-        MemoryDir   = $memoryDir
-    }
+    $toneValue = if ($Tone -eq '') { 'professional' } else { $Tone }
+
+    $newConfig = $Config.Clone()
+    $newConfig['UserName']    = $UserName
+    $newConfig['CompanyName'] = $CompanyName
+    $newConfig['Industry']    = $Industry
+    $newConfig['Tone']        = $toneValue
+    $newConfig['UserRole']    = $UserRole
+    $newConfig['MemoryDir']   = $memoryDir
+    return $newConfig
 }
 
 Export-ModuleMember -Function Invoke-ProductivitySetup

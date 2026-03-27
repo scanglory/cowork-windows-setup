@@ -7,7 +7,9 @@ function Invoke-ChromeSetup {
 
     if ($chromeResponse -match '^[Nn]') {
         Write-Host "Skipping Chrome extension setup. You can install it later from the Chrome Web Store."
-        return $Config + @{ ChromeSetupComplete = $false }
+        $newConfig = $Config.Clone()
+        $newConfig['ChromeSetupComplete'] = $false
+        return $newConfig
     }
 
     # Step 2: Display instructions
@@ -24,7 +26,7 @@ function Invoke-ChromeSetup {
     Write-Host "  5. In the extension settings, add your Anthropic API key"
     Write-Host "     (Your API key should be in: $($Config.CoworkRoot)\.claude\.env)"
     Write-Host ""
-    Write-Host "  ⚠ REMINDER: Your API key is in your .env file — do NOT"
+    Write-Host "  [!] REMINDER: Your API key is in your .env file — do NOT"
     Write-Host "    type it directly into any website or chat." -ForegroundColor Yellow
     Write-Host ""
 
@@ -40,7 +42,9 @@ function Invoke-ChromeSetup {
     Read-Host "  Press Enter to continue" | Out-Null
 
     # Step 5: Return updated config
-    return $Config + @{ ChromeSetupComplete = $true }
+    $newConfig = $Config.Clone()
+    $newConfig['ChromeSetupComplete'] = $true
+    return $newConfig
 }
 
 Export-ModuleMember -Function Invoke-ChromeSetup
