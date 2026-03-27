@@ -120,21 +120,23 @@ function Invoke-ClaudeInstall {
     $claudeCmd = Get-Command claude -ErrorAction SilentlyContinue
 
     if (-not $claudeCmd) {
-        Write-Host ""
-        Write-Host "Claude Code not found."
-        Write-Host "Please download and install Claude Code from: claude.ai/download"
-        Write-Host "After installing, restart this terminal and run the setup again."
-        Write-Host ""
-        Write-Host "Press Enter once Claude Code is installed to continue..."
-        Read-Host "  Press Enter to continue" | Out-Null
-
-        Refresh-Path
-        $claudeCmd = Get-Command claude -ErrorAction SilentlyContinue
-
-        if (-not $claudeCmd) {
-            Write-Error "Claude Code still not found after waiting. Please install it from claude.ai/download and re-run setup."
-            throw "Claude Code installation could not be verified."
+        Write-Host "Claude Code not found. Installing via npm..."
+        $isAdminNow = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+        if ($isAdminNow) {
+            & npm install -g "@anthropic-ai/claude-code"
+        } else {
+            $npmPrefix = "$env:USERPROFILE\.npm-global"
+            & npm install --prefix $npmPrefix "@anthropic-ai/claude-code"
+            $env:PATH = "$npmPrefix\bin;$env:PATH"
+            [Environment]::SetEnvironmentVariable("PATH", "$npmPrefix\bin;" + [Environment]::GetEnvironmentVariable("PATH", "User"), "User")
         }
+        Refresh-Path
+
+        $claudeCmd = Get-Command claude -ErrorAction SilentlyContinue
+        if (-not $claudeCmd) {
+            throw "Claude Code installation could not be verified. Try running 'npm install -g @anthropic-ai/claude-code' manually."
+        }
+        Write-Host "Claude Code installed — OK."
     }
     else {
         Write-Host "Claude Code detected — OK."
