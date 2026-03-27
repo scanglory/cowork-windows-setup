@@ -7,21 +7,21 @@ function Invoke-MCPInstall {
         [hashtable]$Config
     )
 
-    # ── Step 1: Backup settings.json ─────────────────────────────────────────
+    # -- Step 1: Backup settings.json -----------------------------------------
     $settingsPath = "$($Config.ClaudeConfigDir)\settings.json"
 
     if (Test-Path $settingsPath) {
         $backupPath = "$settingsPath.backup-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
         try {
             Copy-Item $settingsPath $backupPath
-            Write-Host "Backed up settings.json → $backupPath"
+            Write-Host "Backed up settings.json -> $backupPath"
         }
         catch {
             Write-Warning "Could not back up settings.json: $_"
         }
     }
 
-    # ── Step 2: Install Desktop Commander ────────────────────────────────────
+    # -- Step 2: Install Desktop Commander ------------------------------------
     if ($Config.IsAdmin) {
         Write-Host "Installing Desktop Commander globally (admin)..."
         & npm install -g @wonderwhy-er/desktop-commander
@@ -51,7 +51,7 @@ function Invoke-MCPInstall {
         }
     }
 
-    # ── Step 3: Verify install ────────────────────────────────────────────────
+    # -- Step 3: Verify install ------------------------------------------------
     # desktop-commander is an MCP server, not a standalone CLI — verify via npm list
     $npmList = & npm list -g @wonderwhy-er/desktop-commander 2>&1
     if ($npmList -match "wonderwhy-er") {
@@ -60,7 +60,7 @@ function Invoke-MCPInstall {
         Write-Warning "Desktop Commander may not have installed correctly. Continuing..."
     }
 
-    # ── Step 4: Register in settings.json ────────────────────────────────────
+    # -- Step 4: Register in settings.json ------------------------------------
     $settingsDir = $Config.ClaudeConfigDir
 
     if (-not (Test-Path $settingsDir)) {
@@ -112,11 +112,11 @@ function Invoke-MCPInstall {
     Write-Host ""
     Write-Host "Desktop Commander MCP installation complete."
 
-    # ── Step 5: Return updated Config (immutable) ─────────────────────────────
+    # -- Step 5: Return updated Config (immutable) -----------------------------
     return $Config + @{ DesktopCommanderInstalled = $true }
 }
 
-# ── Private helper: recursively convert PSCustomObject → hashtable ────────────
+# -- Private helper: recursively convert PSCustomObject -> hashtable ------------
 function ConvertTo-Hashtable {
     param([object]$InputObject)
 

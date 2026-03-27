@@ -46,7 +46,7 @@ $(if ($Config.OutlookMCPEnabled) { "- Outlook MCP ($($Config.OutlookAccountType)
     $claudeMdGlobal = Join-Path $Config.ClaudeConfigDir "CLAUDE.md"
     Set-Content -Path $claudeMdCowork -Value $claudeContent -Encoding UTF8
     Set-Content -Path $claudeMdGlobal -Value $claudeContent -Encoding UTF8
-    Write-Host "✓ CLAUDE.md generated" -ForegroundColor Green
+    Write-Host "[OK] CLAUDE.md generated" -ForegroundColor Green
 
     # Step 5: Generate MEMORY.md from template
     $memTemplatePath = Join-Path $PSScriptRoot "..\templates\MEMORY.md.template"
@@ -62,7 +62,7 @@ $(if ($Config.OutlookMCPEnabled) { "- Outlook MCP ($($Config.OutlookAccountType)
 
     $memPath = Join-Path $Config.CoworkRoot ".claude\MEMORY.md"
     Set-Content -Path $memPath -Value $memContent -Encoding UTF8
-    Write-Host "✓ MEMORY.md generated" -ForegroundColor Green
+    Write-Host "[OK] MEMORY.md generated" -ForegroundColor Green
 
     # Step 6: Generate .env file
     $envPath = Join-Path $Config.CoworkRoot ".claude\.env"
@@ -96,7 +96,7 @@ COWORK_ROOT=$($Config.CoworkRoot)
         )
         $acl.AddAccessRule($rule)
         Set-Acl -Path $envPath -AclObject $acl
-        Write-Host "✓ .env created with restricted permissions" -ForegroundColor Green
+        Write-Host "[OK] .env created with restricted permissions" -ForegroundColor Green
     } catch {
         Write-Warning "Could not set strict .env permissions: $_"
     }

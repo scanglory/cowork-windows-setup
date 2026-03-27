@@ -12,28 +12,28 @@ param()
 
 $ErrorActionPreference = "Stop"
 
-# ── Banner ─────────────────────────────────────────────────────────────────
+# -- Banner -----------------------------------------------------------------
 function Show-Banner {
     Write-Host ""
-    Write-Host "╔══════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-    Write-Host "║                    CoworkOS Setup                           ║" -ForegroundColor Cyan
-    Write-Host "║           For Claude Max Plan Users on Windows              ║" -ForegroundColor Cyan
-    Write-Host "╚══════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+    Write-Host "+══════════════════════════════════════════════════════════════+" -ForegroundColor Cyan
+    Write-Host "|                    CoworkOS Setup                           |" -ForegroundColor Cyan
+    Write-Host "|           For Claude Max Plan Users on Windows              |" -ForegroundColor Cyan
+    Write-Host "+══════════════════════════════════════════════════════════════+" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "  This wizard will set up your complete AI productivity environment:" -ForegroundColor White
-    Write-Host "  • CoworkOS folder structure in your shared drive" -ForegroundColor Gray
-    Write-Host "  • Desktop Commander MCP (file system + terminal access)" -ForegroundColor Gray
-    Write-Host "  • Outlook MCP (email, calendar, contacts)" -ForegroundColor Gray
-    Write-Host "  • Superpowers, GSD, Everything Claude Code plugins" -ForegroundColor Gray
-    Write-Host "  • Auto-memory system and personalized CLAUDE.md" -ForegroundColor Gray
+    Write-Host "  - CoworkOS folder structure in your shared drive" -ForegroundColor Gray
+    Write-Host "  - Desktop Commander MCP (file system + terminal access)" -ForegroundColor Gray
+    Write-Host "  - Outlook MCP (email, calendar, contacts)" -ForegroundColor Gray
+    Write-Host "  - Superpowers, GSD, Everything Claude Code plugins" -ForegroundColor Gray
+    Write-Host "  - Auto-memory system and personalized CLAUDE.md" -ForegroundColor Gray
     Write-Host ""
 
     # Security reminder
-    Write-Host "╔══════════════════════════════════════════════════════════════╗" -ForegroundColor Yellow
-    Write-Host "║  SECURITY REMINDER                                          ║" -ForegroundColor Yellow
-    Write-Host "║  NEVER paste API keys, passwords, or tokens into Claude.    ║" -ForegroundColor Yellow
-    Write-Host "║  All secrets will be stored in your .env file.              ║" -ForegroundColor Yellow
-    Write-Host "╚══════════════════════════════════════════════════════════════╝" -ForegroundColor Yellow
+    Write-Host "+══════════════════════════════════════════════════════════════+" -ForegroundColor Yellow
+    Write-Host "|  SECURITY REMINDER                                          |" -ForegroundColor Yellow
+    Write-Host "|  NEVER paste API keys, passwords, or tokens into Claude.    |" -ForegroundColor Yellow
+    Write-Host "|  All secrets will be stored in your .env file.              |" -ForegroundColor Yellow
+    Write-Host "+══════════════════════════════════════════════════════════════+" -ForegroundColor Yellow
     Write-Host ""
     Write-Host "  Press Enter to begin setup..." -NoNewline
     Read-Host "  Press Enter to continue" | Out-Null
@@ -41,19 +41,19 @@ function Show-Banner {
     Write-Host ""
 }
 
-# ── Progress helper ─────────────────────────────────────────────────────────
+# -- Progress helper ---------------------------------------------------------
 function Write-Phase {
     param([int]$Phase, [int]$Total, [string]$Name)
     Write-Host ""
     Write-Host "  [$Phase/$Total] $Name" -ForegroundColor Cyan
-    Write-Host "  $('─' * 50)" -ForegroundColor DarkGray
+    Write-Host "  $('-' * 50)" -ForegroundColor DarkGray
 }
 
-# ── Log setup ──────────────────────────────────────────────────────────────
+# -- Log setup --------------------------------------------------------------
 $logPath = Join-Path $PSScriptRoot "cowork-setup.log"
 Start-Transcript -Path $logPath -Append -ErrorAction SilentlyContinue
 
-# ── Main ───────────────────────────────────────────────────────────────────
+# -- Main -------------------------------------------------------------------
 try {
     Show-Banner
 
@@ -140,11 +140,11 @@ try {
     Write-Phase 11 $totalPhases "Generating CLAUDE.md, MEMORY.md, .env"
     $Config = Invoke-ConfigGeneration -Config $Config
 
-    # ── Summary ───────────────────────────────────────────────────────────
+    # -- Summary -----------------------------------------------------------
     Write-Host ""
-    Write-Host "╔══════════════════════════════════════════════════════════════╗" -ForegroundColor Green
-    Write-Host "║                  Setup Complete!                            ║" -ForegroundColor Green
-    Write-Host "╚══════════════════════════════════════════════════════════════╝" -ForegroundColor Green
+    Write-Host "+══════════════════════════════════════════════════════════════+" -ForegroundColor Green
+    Write-Host "|                  Setup Complete!                            |" -ForegroundColor Green
+    Write-Host "+══════════════════════════════════════════════════════════════+" -ForegroundColor Green
     Write-Host ""
     Write-Host "  CoworkOS installed at: $($Config.CoworkRoot)" -ForegroundColor White
     Write-Host "  Claude config at:      $($Config.ClaudeConfigDir)" -ForegroundColor White
@@ -164,9 +164,9 @@ try {
 
 } catch {
     Write-Host ""
-    Write-Host "╔══════════════════════════════════════════════════════════════╗" -ForegroundColor Red
-    Write-Host "║  Setup encountered an error                                 ║" -ForegroundColor Red
-    Write-Host "╚══════════════════════════════════════════════════════════════╝" -ForegroundColor Red
+    Write-Host "+══════════════════════════════════════════════════════════════+" -ForegroundColor Red
+    Write-Host "|  Setup encountered an error                                 |" -ForegroundColor Red
+    Write-Host "+══════════════════════════════════════════════════════════════+" -ForegroundColor Red
     Write-Host ""
     Write-Host "  Error type:    $($_.Exception.GetType().Name)" -ForegroundColor Red
     Write-Host "  Error message: $($_.Exception.Message)" -ForegroundColor Red

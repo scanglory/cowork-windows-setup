@@ -2,9 +2,9 @@ function Invoke-ProductivitySetup {
     param([hashtable]$Config)
 
     Write-Host ""
-    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
+    Write-Host "-----------------------------------------------------" -ForegroundColor Cyan
     Write-Host "  Let's personalize your CoworkOS experience" -ForegroundColor Cyan
-    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
+    Write-Host "-----------------------------------------------------" -ForegroundColor Cyan
     Write-Host ""
 
     # Get user's name
@@ -79,7 +79,7 @@ type: feedback
     Set-Content -Path (Join-Path $Config.CoworkRoot ".claude\memory\MEMORY.md") -Value "# Memory Index`n`nSee individual memory files in this directory."
 
     Write-Host ""
-    Write-Host "✓ Memory directory initialized at $memoryDir" -ForegroundColor Green
+    Write-Host "[OK] Memory directory initialized at $memoryDir" -ForegroundColor Green
 
     return $Config + @{
         UserName    = $UserName

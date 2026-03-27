@@ -12,9 +12,9 @@ function Invoke-ChromeSetup {
 
     # Step 2: Display instructions
     Write-Host ""
-    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
+    Write-Host "-----------------------------------------------------" -ForegroundColor Cyan
     Write-Host "  Claude in Chrome Extension Setup" -ForegroundColor Cyan
-    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
+    Write-Host "-----------------------------------------------------" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "Steps:"
     Write-Host "  1. Open Google Chrome"

@@ -31,7 +31,7 @@ function Invoke-ClaudeInstall {
         [hashtable]$Config
     )
 
-    # ── Step 1: Proxy detection ──────────────────────────────────────────────
+    # -- Step 1: Proxy detection ----------------------------------------------
     $proxy = if ($env:HTTPS_PROXY) { $env:HTTPS_PROXY } elseif ($env:HTTP_PROXY) { $env:HTTP_PROXY } else { $null }
 
     if (-not $proxy) {
@@ -49,15 +49,15 @@ function Invoke-ClaudeInstall {
         & npm config set https-proxy $proxy 2>$null
     }
 
-    # ── Step 2: SmartScreen warning ──────────────────────────────────────────
+    # -- Step 2: SmartScreen warning ------------------------------------------
     Write-Host ""
-    Write-Host "╔══════════════════════════════════════════════════════╗" -ForegroundColor Yellow
-    Write-Host "║  Windows may show security prompts during install.   ║" -ForegroundColor Yellow
-    Write-Host "║  If SmartScreen appears: 'More info' → 'Run anyway' ║" -ForegroundColor Yellow
-    Write-Host "╚══════════════════════════════════════════════════════╝" -ForegroundColor Yellow
+    Write-Host "+══════════════════════════════════════════════════════+" -ForegroundColor Yellow
+    Write-Host "|  Windows may show security prompts during install.   |" -ForegroundColor Yellow
+    Write-Host "|  If SmartScreen appears: 'More info' -> 'Run anyway' |" -ForegroundColor Yellow
+    Write-Host "+══════════════════════════════════════════════════════+" -ForegroundColor Yellow
     Write-Host ""
 
-    # ── Step 3: Check / install Node.js ─────────────────────────────────────
+    # -- Step 3: Check / install Node.js -------------------------------------
     $nodeCmd = Get-Command node -ErrorAction SilentlyContinue
 
     if (-not $nodeCmd) {
@@ -96,7 +96,7 @@ function Invoke-ClaudeInstall {
     }
     Write-Host "Node.js verified: $nodeVerify"
 
-    # ── Step 4: Check / install Git ──────────────────────────────────────────
+    # -- Step 4: Check / install Git ------------------------------------------
     $gitCmd = Get-Command git -ErrorAction SilentlyContinue
 
     if (-not $gitCmd) {
@@ -116,7 +116,7 @@ function Invoke-ClaudeInstall {
     }
     Write-Host "Git verified: $gitVerify"
 
-    # ── Step 5: Check Claude Code ────────────────────────────────────────────
+    # -- Step 5: Check Claude Code --------------------------------------------
     $claudeCmd = Get-Command claude -ErrorAction SilentlyContinue
 
     if (-not $claudeCmd) {
@@ -142,7 +142,7 @@ function Invoke-ClaudeInstall {
         Write-Host "Claude Code detected — OK."
     }
 
-    # ── Step 6: Detect (or create) Claude config dir ─────────────────────────
+    # -- Step 6: Detect (or create) Claude config dir -------------------------
     $claudeConfigDir = Get-ClaudeConfigDir
 
     if (-not (Test-Path $claudeConfigDir)) {
@@ -159,7 +159,7 @@ function Invoke-ClaudeInstall {
         Write-Host "Claude config directory: $claudeConfigDir"
     }
 
-    # ── Step 7: Detect admin status ──────────────────────────────────────────
+    # -- Step 7: Detect admin status ------------------------------------------
     $currentPrincipal = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
     $isAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 

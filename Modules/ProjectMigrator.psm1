@@ -2,9 +2,9 @@ function Invoke-ProjectMigration {
     param([hashtable]$Config)
 
     Write-Host ""
-    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
+    Write-Host "-----------------------------------------------------" -ForegroundColor Cyan
     Write-Host "  Scanning your existing Claude Code projects..." -ForegroundColor Cyan
-    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
+    Write-Host "-----------------------------------------------------" -ForegroundColor Cyan
     Write-Host ""
 
     $projectsDir = Join-Path $Config.ClaudeConfigDir "projects"
@@ -32,7 +32,7 @@ function Invoke-ProjectMigration {
 
         # Strategy: replace leading dash, then replace -X:- with X:\ for Windows drives
         $decoded = $encodedName -replace '^-', ''
-        # Handle Windows drive letters: C:-Users → C:\Users
+        # Handle Windows drive letters: C:-Users -> C:\Users
         $decoded = $decoded -replace '^([A-Za-z]):-', '$1:\'
         # Replace remaining dashes with backslashes (path separators)
         # But be careful: project names may contain dashes too
@@ -190,7 +190,7 @@ See CoworkOS for shared rules, memory, and workflow configuration.
     }
 
     Write-Host ""
-    Write-Host "✓ $migratedCount project(s) added to CoworkOS structure" -ForegroundColor Green
+    Write-Host "[OK] $migratedCount project(s) added to CoworkOS structure" -ForegroundColor Green
     Write-Host ""
 
     return $Config + @{ ProjectsMigrated = $migratedCount }

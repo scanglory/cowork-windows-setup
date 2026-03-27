@@ -1,17 +1,17 @@
 function Invoke-ObsidianSetup {
     param([hashtable]$Config)
 
-    # ── Header ──────────────────────────────────────────────────────────────────
+    # -- Header ------------------------------------------------------------------
     Write-Host ""
-    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
+    Write-Host "-----------------------------------------------------" -ForegroundColor Cyan
     Write-Host "  Obsidian Second Brain Setup" -ForegroundColor Cyan
-    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
+    Write-Host "-----------------------------------------------------" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "  Your CoworkOS folder will be your Obsidian vault."
     Write-Host "  Claude will read and write notes directly to it."
     Write-Host ""
 
-    # ── Step 1: Check / install Obsidian ────────────────────────────────────────
+    # -- Step 1: Check / install Obsidian ----------------------------------------
     $obsidianInstalled = $false
     if (Test-Path "${env:LOCALAPPDATA}\Obsidian\Obsidian.exe") { $obsidianInstalled = $true }
     if (Test-Path "${env:PROGRAMFILES}\Obsidian\Obsidian.exe") { $obsidianInstalled = $true }
@@ -24,10 +24,10 @@ function Invoke-ObsidianSetup {
         $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "Machine") + ";" +
                     [System.Environment]::GetEnvironmentVariable("PATH", "User")
     } else {
-        Write-Host "  ✓ Obsidian is already installed" -ForegroundColor Green
+        Write-Host "  [OK] Obsidian is already installed" -ForegroundColor Green
     }
 
-    # ── Step 2: Initialize CoworkOS folder as Obsidian vault ────────────────────
+    # -- Step 2: Initialize CoworkOS folder as Obsidian vault --------------------
     $obsidianDir = Join-Path $Config.CoworkRoot ".obsidian"
     New-Item -ItemType Directory -Force -Path $obsidianDir | Out-Null
 
@@ -55,9 +55,9 @@ function Invoke-ObsidianSetup {
     ) | ConvertTo-Json
     Set-Content -Path "$obsidianDir\core-plugins.json" -Value $corePlugins -Encoding UTF8
 
-    Write-Host "  ✓ Obsidian vault initialized at: $($Config.CoworkRoot)" -ForegroundColor Green
+    Write-Host "  [OK] Obsidian vault initialized at: $($Config.CoworkRoot)" -ForegroundColor Green
 
-    # ── Step 3: Create vault-level .claude folder and hooks config ───────────────
+    # -- Step 3: Create vault-level .claude folder and hooks config ---------------
     $vaultClaudeDir = Join-Path $Config.CoworkRoot ".claude"
     New-Item -ItemType Directory -Force -Path $vaultClaudeDir | Out-Null
 
@@ -84,9 +84,9 @@ function Invoke-ObsidianSetup {
         }
     } | ConvertTo-Json -Depth 10
     Set-Content -Path "$vaultClaudeDir\settings.json" -Value $vaultSettings -Encoding UTF8
-    Write-Host "  ✓ Vault Claude hooks configured" -ForegroundColor Green
+    Write-Host "  [OK] Vault Claude hooks configured" -ForegroundColor Green
 
-    # ── Step 4: Auto-install Local REST API plugin from GitHub ──────────────────
+    # -- Step 4: Auto-install Local REST API plugin from GitHub ------------------
     Write-Host ""
     Write-Host "  Installing Obsidian Local REST API plugin..." -ForegroundColor Cyan
 
@@ -113,10 +113,10 @@ function Invoke-ObsidianSetup {
             if ($Config.Proxy) { $fileParams.Proxy = $Config.Proxy; $fileParams.ProxyUseDefaultCredentials = $true }
             try { Invoke-WebRequest @fileParams } catch { <# styles.css is optional #> }
         }
-        Write-Host "  ✓ Plugin files downloaded ($tag)" -ForegroundColor Green
+        Write-Host "  [OK] Plugin files downloaded ($tag)" -ForegroundColor Green
     } catch {
-        Write-Host "  ✗ Could not download plugin automatically: $_" -ForegroundColor Red
-        Write-Host "  Manual install: Settings → Community Plugins → Browse → 'Local REST API'" -ForegroundColor Yellow
+        Write-Host "  [FAIL] Could not download plugin automatically: $_" -ForegroundColor Red
+        Write-Host "  Manual install: Settings -> Community Plugins -> Browse -> 'Local REST API'" -ForegroundColor Yellow
     }
 
     # Enable the plugin in community-plugins.json
@@ -145,7 +145,7 @@ function Invoke-ObsidianSetup {
     } | ConvertTo-Json
     Set-Content -Path "$pluginDir\data.json" -Value $pluginData -Encoding UTF8
 
-    Write-Host "  ✓ Local REST API plugin configured (API key pre-generated)" -ForegroundColor Green
+    Write-Host "  [OK] Local REST API plugin configured (API key pre-generated)" -ForegroundColor Green
 
     # Install obsidian-mcp npm package
     Write-Host ""
@@ -189,21 +189,21 @@ function Invoke-ObsidianSetup {
     $apiKeyPlain = $null
     [GC]::Collect()
 
-    Write-Host "  ✓ Obsidian MCP configured" -ForegroundColor Green
+    Write-Host "  [OK] Obsidian MCP configured" -ForegroundColor Green
     Write-Host ""
     Write-Host "  Test it in Claude: 'Search my vault for project notes'"
     Write-Host ""
 
-    # ── Step 6: Prompt user to open Obsidian and enable community plugins ────────
+    # -- Step 6: Prompt user to open Obsidian and enable community plugins --------
     Write-Host ""
-    Write-Host "  ─────────────────────────────────────────────────────"
+    Write-Host "  -----------------------------------------------------"
     Write-Host "  One Manual Step Required" -ForegroundColor Yellow
-    Write-Host "  ─────────────────────────────────────────────────────"
+    Write-Host "  -----------------------------------------------------"
     Write-Host ""
     Write-Host "  Obsidian blocks community plugins until you approve them once."
     Write-Host ""
     Write-Host "  1. Open Obsidian and select your CoworkOS vault"
-    Write-Host "  2. Go to Settings → Community Plugins"
+    Write-Host "  2. Go to Settings -> Community Plugins"
     Write-Host "  3. Click 'Turn off Restricted Mode'"
     Write-Host "  4. Click 'Enable' on 'Local REST API' (already installed)"
     Write-Host ""
@@ -223,20 +223,20 @@ function Invoke-ObsidianSetup {
     Read-Host "  Press Enter to continue" | Out-Null
     Write-Host ""
 
-    # ── Step 7: Recommend Smart Connections plugin ───────────────────────────────
-    Write-Host "  ─────────────────────────────────────────────────────"
+    # -- Step 7: Recommend Smart Connections plugin -------------------------------
+    Write-Host "  -----------------------------------------------------"
     Write-Host "  Recommended: Smart Connections Plugin" -ForegroundColor Yellow
-    Write-Host "  ─────────────────────────────────────────────────────"
+    Write-Host "  -----------------------------------------------------"
     Write-Host ""
     Write-Host "  For semantic search (find related notes by meaning):"
-    Write-Host "  Settings → Community Plugins → Browse → 'Smart Connections'"
+    Write-Host "  Settings -> Community Plugins -> Browse -> 'Smart Connections'"
     Write-Host "  Install and enable it. Enter your Anthropic API key when prompted."
     Write-Host "  Store your API key in .env — do NOT type it directly into Obsidian."
     Write-Host ""
     Write-Host "  Press Enter to continue..."
     Read-Host "  Press Enter to continue" | Out-Null
 
-    # ── Step 7: Return updated config ───────────────────────────────────────────
+    # -- Step 7: Return updated config -------------------------------------------
     return $Config + @{
         ObsidianSetupComplete = $true
         ObsidianVaultPath     = $Config.CoworkRoot

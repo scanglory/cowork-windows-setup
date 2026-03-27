@@ -15,7 +15,7 @@ function Invoke-OutlookMCPSetup {
         [hashtable]$Config
     )
 
-    # ── Step 1: Ask if user wants Outlook MCP ────────────────────────────────
+    # -- Step 1: Ask if user wants Outlook MCP --------------------------------
     Write-Host ""
     $enablePrompt = Read-Host "Would you like to connect Outlook/Microsoft 365 to Claude? [Y/n] (default Y)"
 
@@ -24,7 +24,7 @@ function Invoke-OutlookMCPSetup {
         return $Config + @{ OutlookMCPEnabled = $false }
     }
 
-    # ── Step 2: Get email and detect account type ─────────────────────────────
+    # -- Step 2: Get email and detect account type -----------------------------
     $email = ""
     while ($email -eq "") {
         $email = (Read-Host "Enter your Outlook/Microsoft email address").Trim()
@@ -43,7 +43,7 @@ function Invoke-OutlookMCPSetup {
         Write-Host "Detected: Corporate Microsoft 365 account"
     }
 
-    # ── Step 3a / 3b: Account-type-specific setup ─────────────────────────────
+    # -- Step 3a / 3b: Account-type-specific setup -----------------------------
     $mcpEntry  = $null
     $envVars   = @{}
 
@@ -58,7 +58,7 @@ function Invoke-OutlookMCPSetup {
         $mcpEntry = $mcpEntry.McpEntry
     }
 
-    # ── Write .env file ───────────────────────────────────────────────────────
+    # -- Write .env file -------------------------------------------------------
     $envDir  = "$($Config.CoworkRoot)\.claude"
     $envPath = "$envDir\.env"
 
@@ -94,7 +94,7 @@ function Invoke-OutlookMCPSetup {
         throw
     }
 
-    # ── Register in settings.json ─────────────────────────────────────────────
+    # -- Register in settings.json ---------------------------------------------
     $settingsPath = "$($Config.ClaudeConfigDir)\settings.json"
     $settings     = Read-SettingsJson -Path $settingsPath
 
@@ -112,7 +112,7 @@ function Invoke-OutlookMCPSetup {
         throw
     }
 
-    # ── Step 4: Test connection guidance ─────────────────────────────────────
+    # -- Step 4: Test connection guidance -------------------------------------
     Write-Host ""
     Write-Host "Testing Outlook connection..."
     Write-Host ""
@@ -120,7 +120,7 @@ function Invoke-OutlookMCPSetup {
     Write-Host '  "List my 5 most recent emails"'
     Write-Host ""
 
-    # ── Step 5: Return updated Config (immutable) ─────────────────────────────
+    # -- Step 5: Return updated Config (immutable) -----------------------------
     return $Config + @{
         OutlookMCPEnabled  = $true
         OutlookAccountType = $accountType
@@ -128,7 +128,7 @@ function Invoke-OutlookMCPSetup {
     }
 }
 
-# ── Private: Personal (IMAP) setup ───────────────────────────────────────────
+# -- Private: Personal (IMAP) setup -------------------------------------------
 function Invoke-PersonalOutlookSetup {
     param(
         [hashtable]$Config,
@@ -180,7 +180,7 @@ function Invoke-PersonalOutlookSetup {
     }
 }
 
-# ── Private: Corporate (Microsoft Graph) setup ────────────────────────────────
+# -- Private: Corporate (Microsoft Graph) setup --------------------------------
 function Invoke-CorporateOutlookSetup {
     param(
         [hashtable]$Config,
@@ -192,13 +192,13 @@ function Invoke-CorporateOutlookSetup {
     Write-Host "This is the most reliable method for accounts with multi-factor authentication."
     Write-Host ""
     Write-Host "You'll need to register an application in Azure Active Directory:"
-    Write-Host "  1. Go to portal.azure.com → Azure Active Directory → App Registrations"
+    Write-Host "  1. Go to portal.azure.com -> Azure Active Directory -> App Registrations"
     Write-Host "  2. Click 'New registration'"
     Write-Host "  3. Name: 'CoworkOS Claude Integration'"
     Write-Host "  4. Supported account type: 'Accounts in this organizational directory only'"
     Write-Host "  5. Click Register"
     Write-Host "  6. Copy the 'Application (client) ID' and 'Directory (tenant) ID'"
-    Write-Host "  7. Go to 'API permissions' → Add permission → Microsoft Graph → Delegated"
+    Write-Host "  7. Go to 'API permissions' -> Add permission -> Microsoft Graph -> Delegated"
     Write-Host "  8. Add: Mail.Read, Mail.Send, Calendars.Read, Calendars.ReadWrite, Contacts.Read"
     Write-Host "  9. Click 'Grant admin consent' (or ask your IT admin)"
     Write-Host ""
@@ -250,7 +250,7 @@ function Invoke-CorporateOutlookSetup {
     }
 }
 
-# ── Private: Read settings.json, return hashtable (or empty if missing) ───────
+# -- Private: Read settings.json, return hashtable (or empty if missing) -------
 function Read-SettingsJson {
     param([string]$Path)
 
@@ -267,7 +267,7 @@ function Read-SettingsJson {
     }
 }
 
-# ── Private: Merge new env vars into existing .env lines (immutable) ──────────
+# -- Private: Merge new env vars into existing .env lines (immutable) ----------
 function Merge-EnvFileLines {
     param(
         [string[]]$ExistingLines,
@@ -311,7 +311,7 @@ function Merge-EnvFileLines {
     return $outputLines
 }
 
-# ── Private: recursively convert PSCustomObject → hashtable ──────────────────
+# -- Private: recursively convert PSCustomObject -> hashtable ------------------
 function ConvertTo-Hashtable {
     param([object]$InputObject)
 
