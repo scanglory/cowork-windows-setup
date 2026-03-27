@@ -14,7 +14,7 @@ $repoOwner = "scanglory"
 $repoName  = "cowork-windows-setup"
 $branch    = "main"
 $zipUrl    = "https://github.com/$repoOwner/$repoName/archive/refs/heads/$branch.zip"
-$tempDir   = Join-Path $env:TEMP "cowork-setup-$(Get-Random)"
+$tempDir   = Join-Path $env:TEMP "cowork-setup-$([DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds())"
 $zipPath   = "$tempDir.zip"
 
 Write-Host "  Downloading CoworkOS setup files..." -ForegroundColor Cyan
