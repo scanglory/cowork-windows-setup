@@ -52,22 +52,12 @@ function Invoke-MCPInstall {
     }
 
     # ── Step 3: Verify install ────────────────────────────────────────────────
-    $verified = $false
-
-    $dcVersion = & desktop-commander --version 2>&1
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host "Desktop Commander verified: $dcVersion"
-        $verified = $true
-    }
-    else {
-        $dcVersion = & npx @wonderwhy-er/desktop-commander --version 2>&1
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host "Desktop Commander verified via npx: $dcVersion"
-            $verified = $true
-        }
-        else {
-            Write-Warning "Desktop Commander verification failed. Continuing..."
-        }
+    # desktop-commander is an MCP server, not a standalone CLI — verify via npm list
+    $npmList = & npm list -g @wonderwhy-er/desktop-commander 2>&1
+    if ($npmList -match "wonderwhy-er") {
+        Write-Host "Desktop Commander installed OK."
+    } else {
+        Write-Warning "Desktop Commander may not have installed correctly. Continuing..."
     }
 
     # ── Step 4: Register in settings.json ────────────────────────────────────
@@ -99,10 +89,10 @@ function Invoke-MCPInstall {
         }
     }
 
-    # Build the desktop-commander MCP entry (immutable — create new nested tables)
+    # Build the desktop-commander MCP entry — run via npx (not a standalone binary)
     $dcEntry = @{
-        command = "desktop-commander"
-        args    = @()
+        command = "npx"
+        args    = @("-y", "@wonderwhy-er/desktop-commander")
     }
 
     # Merge mcpServers — never mutate existing hashtable, build new ones
