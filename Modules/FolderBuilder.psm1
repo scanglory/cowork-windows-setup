@@ -112,7 +112,8 @@ function Invoke-FolderBuild {
 
     # Create .gitignore in CoworkRoot
     $gitignorePath = Join-Path $coworkRoot ".gitignore"
-    $gitignoreContent = @".env
+    $gitignoreContent = @"
+.env
 *.log
 .DS_Store
 Thumbs.db
