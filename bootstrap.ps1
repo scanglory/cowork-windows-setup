@@ -13,7 +13,7 @@ Set-ExecutionPolicy -Scope Process Bypass -Force -ErrorAction SilentlyContinue
 # Access is restricted to authorized Cowork users only.
 # The hash below is SHA256 of the access password.
 # To update: run tools\New-AccessHash.ps1 and paste the result here.
-$ACCESS_HASH = "2C4788D16E505B232B7CD66D806770C4CD0630610CFB9BFF4502387A8E33673C"
+$ACCESS_HASH = "9DC415325A95C6E2558BF141A8772A175DE49B08F0A027C8720AD942D6EC63F7"
 
 function Test-AccessPassword {
     param([string]$StoredHash)
