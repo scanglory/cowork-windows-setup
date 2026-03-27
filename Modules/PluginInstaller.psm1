@@ -15,12 +15,12 @@ function Invoke-PluginInstall {
             if ($LASTEXITCODE -eq 0) {
                 Write-Host "[OK] $pluginName installed" -ForegroundColor Green
             } else {
-                Write-Warning "Plugin $pluginName: $result"
-                Write-Warning "  -> Install manually: Open Claude Code -> Settings -> Plugins -> search '$pluginName'"
+                Write-Warning "Plugin ${pluginName} failed: $result"
+                Write-Warning "  -> Install manually: Open Claude Code -> Settings -> Plugins -> search '${pluginName}'"
             }
         } catch {
-            Write-Warning "Plugin $pluginName could not be installed via CLI: $_"
-            Write-Warning "  -> Install manually: Open Claude Code -> Settings -> Plugins -> search '$pluginName'"
+            Write-Warning "Plugin ${pluginName} could not be installed via CLI: $_"
+            Write-Warning "  -> Install manually: Open Claude Code -> Settings -> Plugins -> search '${pluginName}'"
         }
     }
 
