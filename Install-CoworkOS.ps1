@@ -36,8 +36,8 @@ function Show-Banner {
     Write-Host "║  All secrets will be stored in your .env file.              ║" -ForegroundColor Yellow
     Write-Host "╚══════════════════════════════════════════════════════════════╝" -ForegroundColor Yellow
     Write-Host ""
-    Write-Host "  Press any key to begin setup..." -NoNewline
-    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    Write-Host "  Press Enter to begin setup..." -NoNewline
+    Read-Host "  Press Enter to continue" | Out-Null
     Write-Host ""
     Write-Host ""
 }

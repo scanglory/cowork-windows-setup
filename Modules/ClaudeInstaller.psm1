@@ -125,8 +125,8 @@ function Invoke-ClaudeInstall {
         Write-Host "Please download and install Claude Code from: claude.ai/download"
         Write-Host "After installing, restart this terminal and run the setup again."
         Write-Host ""
-        Write-Host "Press any key once Claude Code is installed to continue..."
-        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+        Write-Host "Press Enter once Claude Code is installed to continue..."
+        Read-Host "  Press Enter to continue" | Out-Null
 
         Refresh-Path
         $claudeCmd = Get-Command claude -ErrorAction SilentlyContinue

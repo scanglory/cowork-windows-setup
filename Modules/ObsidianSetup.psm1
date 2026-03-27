@@ -219,8 +219,8 @@ function Invoke-ObsidianSetup {
         Start-Process $obsidianExe
     }
 
-    Write-Host "  Press any key when done..."
-    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    Write-Host "  Press Enter when done..."
+    Read-Host "  Press Enter to continue" | Out-Null
     Write-Host ""
 
     # ── Step 7: Recommend Smart Connections plugin ───────────────────────────────
@@ -233,8 +233,8 @@ function Invoke-ObsidianSetup {
     Write-Host "  Install and enable it. Enter your Anthropic API key when prompted."
     Write-Host "  Store your API key in .env — do NOT type it directly into Obsidian."
     Write-Host ""
-    Write-Host "  Press any key to continue..."
-    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    Write-Host "  Press Enter to continue..."
+    Read-Host "  Press Enter to continue" | Out-Null
 
     # ── Step 7: Return updated config ───────────────────────────────────────────
     return $Config + @{

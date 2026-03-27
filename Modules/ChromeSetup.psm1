@@ -36,8 +36,8 @@ function Invoke-ChromeSetup {
     }
 
     # Step 4: Wait for user
-    Write-Host "Press any key once you have installed the extension (or Escape to skip)..."
-    $key = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    Write-Host "Press Enter once you have installed the extension (or type 'skip' to skip)..."
+    Read-Host "  Press Enter to continue" | Out-Null
 
     # Step 5: Return updated config
     return $Config + @{ ChromeSetupComplete = $true }
