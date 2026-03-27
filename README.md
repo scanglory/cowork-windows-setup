@@ -29,7 +29,7 @@ Built for Claude Max plan users.
 Open PowerShell and run:
 
 ```powershell
-irm https://raw.githubusercontent.com/YOUR_GITHUB_ORG/cowork-windows-setup/main/bootstrap.ps1 | iex
+irm https://raw.githubusercontent.com/scanglory/cowork-windows-setup/main/bootstrap.ps1 | iex
 ```
 
 The setup wizard will guide you through the rest (~15 minutes).
@@ -39,7 +39,7 @@ The setup wizard will guide you through the rest (~15 minutes).
 To update rules and agents to the latest version:
 
 ```powershell
-irm https://raw.githubusercontent.com/YOUR_GITHUB_ORG/cowork-windows-setup/main/Update-CoworkOS.ps1 | iex
+irm https://raw.githubusercontent.com/scanglory/cowork-windows-setup/main/Update-CoworkOS.ps1 | iex
 ```
 
 ## After Setup

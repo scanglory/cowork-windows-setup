@@ -3,7 +3,7 @@
 .SYNOPSIS
     CoworkOS Bootstrap — Downloads and launches the CoworkOS installer
 .NOTES
-    Usage: irm https://raw.githubusercontent.com/YOUR_ORG/cowork-windows-setup/main/bootstrap.ps1 | iex
+    Usage: irm https://raw.githubusercontent.com/scanglory/cowork-windows-setup/main/bootstrap.ps1 | iex
 #>
 
 # ── Bypass execution policy for this process only ──────────────────────────
@@ -13,7 +13,7 @@ Set-ExecutionPolicy -Scope Process Bypass -Force -ErrorAction SilentlyContinue
 # Access is restricted to authorized Cowork users only.
 # The hash below is SHA256 of the access password.
 # To update: run tools\New-AccessHash.ps1 and paste the result here.
-$ACCESS_HASH = "REPLACE_WITH_YOUR_PASSWORD_HASH"
+$ACCESS_HASH = "2C4788D16E505B232B7CD66D806770C4CD0630610CFB9BFF4502387A8E33673C"
 
 function Test-AccessPassword {
     param([string]$StoredHash)
@@ -72,7 +72,7 @@ if (-not (Test-AccessPassword -StoredHash $ACCESS_HASH)) {
 }
 
 # ── Download and extract repo ──────────────────────────────────────────────
-$repoOwner = "YOUR_GITHUB_ORG"
+$repoOwner = "scanglory"
 $repoName  = "cowork-windows-setup"
 $branch    = "main"
 $zipUrl    = "https://github.com/$repoOwner/$repoName/archive/refs/heads/$branch.zip"

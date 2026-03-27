@@ -143,7 +143,7 @@ Then restart Claude Code and try the GSD command again.
 Once you know what failed, fix that specific issue using the relevant section above, then re-run the installer:
 
 ```powershell
-irm https://raw.githubusercontent.com/YOUR_GITHUB_ORG/cowork-windows-setup/main/bootstrap.ps1 | iex
+irm https://raw.githubusercontent.com/scanglory/cowork-windows-setup/main/bootstrap.ps1 | iex
 ```
 
 The installer is safe to re-run. It checks what is already installed and skips completed steps, so you will not end up with duplicates or broken state.

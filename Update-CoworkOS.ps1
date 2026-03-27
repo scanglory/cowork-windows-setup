@@ -35,7 +35,7 @@ Write-Host "  Claude config: $ClaudeConfigDir" -ForegroundColor Gray
 Write-Host ""
 
 # Download latest package
-$repoOwner = "YOUR_GITHUB_ORG"
+$repoOwner = "scanglory"
 $repoName  = "cowork-windows-setup"
 $zipUrl    = "https://github.com/$repoOwner/$repoName/archive/refs/heads/main.zip"
 $tempDir   = Join-Path $env:TEMP "cowork-update-$(Get-Random)"
