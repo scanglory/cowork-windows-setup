@@ -75,12 +75,14 @@ try {
     )
     foreach ($mod in $moduleFiles) {
         $modPath = Join-Path $modulesDir $mod
+        Write-Host "  Loading $mod..." -ForegroundColor DarkGray
         if (Test-Path $modPath) {
             Import-Module $modPath -Force -ErrorAction Stop
         } else {
             Write-Warning "Module not found: $mod"
         }
     }
+    Write-Host "  All modules loaded." -ForegroundColor DarkGray
 
     # Initialize shared config hashtable
     $Config = @{
@@ -163,12 +165,15 @@ try {
     Write-Host "║  Setup encountered an error                                 ║" -ForegroundColor Red
     Write-Host "╚══════════════════════════════════════════════════════════════╝" -ForegroundColor Red
     Write-Host ""
-    Write-Host "  Error: $_" -ForegroundColor Red
-    Write-Host "  See log: $logPath" -ForegroundColor Gray
+    Write-Host "  Error type:    $($_.Exception.GetType().Name)" -ForegroundColor Red
+    Write-Host "  Error message: $($_.Exception.Message)" -ForegroundColor Red
     Write-Host ""
+    Write-Host "  Stack trace:" -ForegroundColor Yellow
+    Write-Host $_.ScriptStackTrace -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "  See full log: $logPath" -ForegroundColor Gray
     Write-Host "  For help, check: docs\TROUBLESHOOTING.md" -ForegroundColor Gray
     Write-Host ""
-    throw
 } finally {
     Stop-Transcript -ErrorAction SilentlyContinue
 }
